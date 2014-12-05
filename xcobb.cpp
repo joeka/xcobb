@@ -106,8 +106,8 @@ int main ( int argc, char *argv[])
 {
 	if( argc < 3 || (argv[1][0] == 'c' && argc < 4) )
 	{
-		cout << "xcobb c obb_file [output_dir]" << endl;
-		cout << "xcobb x obb_file input_dir" << endl;
+		cout << "xcobb x obb_file [output_dir]" << endl;
+		cout << "xcobb c obb_file input_dir" << endl;
 		return 0;
 	}
 
