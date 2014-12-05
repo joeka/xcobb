@@ -46,6 +46,9 @@ int extract( char * filename, fs::path working_dir )
 	for (int i = 0; i < filecount; i++)
 	{
 		obbfile.read( (char*)&namelength, 4);
+		obbfile.seekg( 1, ios_base::cur); // to cut ../ in the beginning of the filepath
+		namelength -= 1;
+
 		buffer = new char[namelength];
 		obbfile.read( buffer, namelength);
 		cout << "  " << buffer << endl;
@@ -112,11 +115,10 @@ int main ( int argc, char *argv[])
 	}
 
 	
-	fs::path working_dir("./build");
+	fs::path working_dir(".");
 	if( argc > 3 )
 	{
 		working_dir = argv[3];
-		working_dir = working_dir / "build";
 	}
 
 
