@@ -11,7 +11,95 @@ namespace fs = boost::filesystem;
 
 int create( char * filename, fs::path working_dir )
 {
-	cout << "Please implement me" << endl;
+	fs::recursive_directory_iterator it(working_dir);
+	fs::recursive_directory_iterator end;
+	vector <fs::path> files;
+	while (it != end)
+	{
+		if( ! fs::is_directory(it->path()) )
+			files.push_back( it->path() );
+		it++;
+	}
+
+	int filecount = files.size();
+	int namelength[filecount];
+	long filepos[filecount];
+	int filesize[filecount];
+	vector<string> filepath;
+
+	fstream obbfile;
+	obbfile.open( filename, ios::out | ios::binary);
+	obbfile.write("XComOBB",7);
+	obbfile.write((char*)&filecount,4);
+
+	int listpos = obbfile.tellg();
+
+	char * cbuf = new char[ 256 ];
+	char * zeros =new char [12];
+	fill( zeros, zeros+12, 0);
+
+	for (int i = 0; i < filecount; i++)
+	{
+		strcpy( cbuf, "..");
+		strcpy( cbuf+2, files[i].string().c_str() + working_dir.string().length() -1);
+		namelength[i] = strlen(cbuf);
+		for ( int j = 0; j < namelength[i]; j++)
+		{
+			if (cbuf[j] == '\\')
+			{
+				cbuf[j] = '/';
+			}
+		}
+		filepath.push_back (cbuf);
+
+		obbfile.write((char*)&namelength[i],4);
+		obbfile.write(cbuf,namelength[i]);
+		obbfile.write(zeros, 12);
+	}
+
+	for (int i = 0; i < filecount; i++)
+	{
+		filepos[i] = obbfile.tellg();
+		filesize[i] = file_size(files[i]);
+		ifstream currentfile;
+		currentfile.open(files[i].string().c_str(), ios::in | ios::binary);
+		cout << files[i] << endl;
+		if( ! currentfile.is_open() )
+		{
+			cout << "Could not open or create " << files[i].string() << endl;
+			continue;
+		}
+		
+		int buffer_size = 500000;
+		int progress = 0;
+		
+		char * buffer = new char[buffer_size];
+		
+		while ( currentfile.read(buffer, buffer_size) )
+		{
+			progress += currentfile.gcount();
+			obbfile.write(buffer, currentfile.gcount());
+		}
+		if (currentfile.eof() && currentfile.gcount() > 0)
+		{
+			obbfile.write(buffer, currentfile.gcount());
+		}
+		
+		currentfile.close();
+	}
+
+	obbfile.seekg(listpos);
+
+	for (int i = 0; i < filecount; i++)
+	{
+		//4B file name length | filename (variable) | 8B pos | 4B length
+		obbfile.seekg( 4 + namelength[i], ios_base::cur);
+		obbfile.write( (char*)&filepos[i], 8 );
+		obbfile.write( (char*)&filesize[i], 4);
+	}
+
+	obbfile.close();
+
 	return 0;
 }
 
