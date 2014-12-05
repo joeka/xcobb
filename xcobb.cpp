@@ -8,24 +8,17 @@
 using namespace std;
 namespace fs = boost::filesystem;
 
-int main ( int argc, char *argv[])
+
+int create( char * filename, fs::path working_dir )
 {
-	if( argc < 2)
-	{
-		cout << "xcobb obb_file [output_dir]" << endl;
-		return 0;
-	}
+	cout << "Please implement me" << endl;
+	return 0;
+}
 
-
-	fs::path working_dir("./build");
-	if( argc > 2 )
-	{
-		working_dir = argv[2];
-		working_dir = working_dir / "build";
-	}
-
+int extract( char * filename, fs::path working_dir )
+{
 	ifstream obbfile;
-	obbfile.open(argv[1], ios::in | ios::binary);
+	obbfile.open(filename, ios::in | ios::binary);
 
 	if (! obbfile.is_open() )
 	{
@@ -109,3 +102,30 @@ int main ( int argc, char *argv[])
 	return 0;
 }
 
+int main ( int argc, char *argv[])
+{
+	if( argc < 3 || (argv[1][0] == 'c' && argc < 4) )
+	{
+		cout << "xcobb c obb_file [output_dir]" << endl;
+		cout << "xcobb x obb_file input_dir" << endl;
+		return 0;
+	}
+
+	
+	fs::path working_dir("./build");
+	if( argc > 3 )
+	{
+		working_dir = argv[3];
+		working_dir = working_dir / "build";
+	}
+
+
+	if ( argv[1][0] == 'x' )
+		return extract(argv[2], working_dir);
+	else if ( argv[1][0] == 'c' )
+		return create(argv[2], working_dir);
+	else
+		cout << "Unkown command '" << argv[1] << "'." << endl;
+
+	return 0;
+}
