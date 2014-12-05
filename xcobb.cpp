@@ -8,12 +8,24 @@
 using namespace std;
 namespace fs = boost::filesystem;
 
-int main ()
+int main ( int argc, char *argv[])
 {
-	fs::path working_dir("../xcom/build");
+	if( argc < 2)
+	{
+		cout << "xcobb obb_file [output_dir]" << endl;
+		return 0;
+	}
+
+
+	fs::path working_dir("./build");
+	if( argc > 2 )
+	{
+		working_dir = argv[2];
+		working_dir = working_dir / "build";
+	}
 
 	ifstream obbfile;
-	obbfile.open("../main.12.com.tt2kgames.xcomew.obb", ios::in | ios::binary);
+	obbfile.open(argv[1], ios::in | ios::binary);
 
 	if (! obbfile.is_open() )
 	{
@@ -63,12 +75,16 @@ int main ()
 
 		fs::path path ( working_dir / buffer);
 		
-		if ( ! fs::create_directories(path.parent_path()) )
-			cout << "Could not create directory: " << path.parent_path().string() << endl;
+		fs::create_directories(path.parent_path());
 
 		obbfile.seekg(position);
 		ofstream of;
 		of.open(path.string().c_str(), ios::out | ios::binary);
+		if( ! of.is_open() )
+		{
+			cout << "Could not open or create " << path.string() << endl;
+			continue;
+		}
 		
 		int buffer_size = 500000;
 		int progress = 0;
@@ -84,7 +100,7 @@ int main ()
 			of.write(buffer, cbuf);
 			progress += cbuf;
 		}
-
+		of.close();
 		//reset list
 		obbfile.seekg(listpos);
 	}
