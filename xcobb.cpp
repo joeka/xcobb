@@ -220,7 +220,6 @@ int listFiles( char * filename, bool printsize = false )
 	//cout << "Number of files: " << filecount << endl;
 
 	int namelength = 0;
-	int listpos = 0;
 	vector<char*> filelist;
 	int filesize[filecount];
 	int max_width = 0;
@@ -252,6 +251,7 @@ int listFiles( char * filename, bool printsize = false )
    			cout << setw(8) << filesize[i];
 		cout << endl;
 	}
+	return 0;
 }
 
 void printHelp()
