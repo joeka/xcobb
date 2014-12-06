@@ -1,5 +1,6 @@
-Extract or create OBB files for the Android version of XCOM.
+Extract or create OBB files for the Android version of XCOM.  
 
+```
 Build:
   make
 
@@ -8,3 +9,4 @@ Usage:
   Create:   xcobb c obb_file input_dir
   List:     xcobb l[s] obb_file
             (ls will also print the size)
+```
