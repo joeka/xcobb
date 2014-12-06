@@ -242,13 +242,13 @@ int listFiles( char * filename, bool printsize = false )
 		if ( strlen(buffer) > max_width )
 			max_width = strlen(buffer);
 	}
-	max_width += 3;
-	cout << left; // << setw(max_width) << "  FILENAME  " << setw(8) << "FILESIZE" << endl;
+	max_width += 1;
+	//cout << left << setw(max_width) << "  FILENAME  " << setw(8) << "FILESIZE" << endl;
 	for (int i = 0; i < filecount; i++)
 	{
-		cout << setw(max_width) << filelist[i];
+		cout << left << setw(max_width) << filelist[i];
 		if (printsize)
-   			cout << setw(8) << filesize[i];
+   			cout << right << setw(10) << filesize[i];
 		cout << endl;
 	}
 	return 0;
