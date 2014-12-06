@@ -45,9 +45,9 @@ int create( char * filename, fs::path working_dir )
 		namelength[i] = strlen(cbuf) + 1;
 		for ( int j = 0; j < namelength[i]; j++)
 		{
-			if (cbuf[j] == '\\')
+			if (cbuf[j] == '/')
 			{
-				cbuf[j] = '/';
+				cbuf[j] = '\\';
 			}
 		}
 		filepath.push_back (cbuf);
