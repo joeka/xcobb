@@ -133,12 +133,11 @@ int extract( char * filename, fs::path working_dir )
 	for (int i = 0; i < filecount; i++)
 	{
 		obbfile.read( (char*)&namelength, 4);
-		obbfile.seekg( 1, ios_base::cur); // to cut ../ in the beginning of the filepath
-		namelength -= 1;
+		obbfile.seekg( 3, ios_base::cur); // to cut ../ in the beginning of the filepath
+		namelength -= 3;
 
 		buffer = new char[namelength];
 		obbfile.read( buffer, namelength);
-		cout << "  " << buffer << endl;
 
 		//4B file name length | filename (variable) | 8B pos | 4B length
 		long position = 0;
@@ -168,6 +167,8 @@ int extract( char * filename, fs::path working_dir )
 			cout << "Could not open or create " << path.string() << endl;
 			continue;
 		}
+		
+		cout << "  " << path << endl;
 		
 		int buffer_size = 500000;
 		int progress = 0;
