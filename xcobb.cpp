@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include <string.h>
+#include <iomanip>
 
 #include <boost/filesystem.hpp>
 
@@ -119,7 +120,7 @@ int extract( char * filename, fs::path working_dir )
 
 	if (strcmp(buffer, "XComOBB") != 0)
 	{
-		cout << "Input file is not a XCom OBB." << endl;
+		cout << "Input file is not an XCom OBB." << endl;
 		return 1;
 	}
 
@@ -193,12 +194,80 @@ int extract( char * filename, fs::path working_dir )
 	return 0;
 }
 
+int listFiles( char * filename, bool printsize = false )
+{
+	ifstream obbfile;
+	obbfile.open(filename, ios::in | ios::binary);
+
+	if (! obbfile.is_open() )
+	{
+		cout << "Could not open file." << endl;
+		return 1;
+	}
+
+	char * buffer = new char [7];
+	obbfile.read (buffer, 7);
+
+	if (strcmp(buffer, "XComOBB") != 0)
+	{
+		cout << "Input file is not an XCom OBB." << endl;
+		return 1;
+	}
+
+	int filecount = 0;
+	obbfile.read( (char*)&filecount, 4);
+
+	//cout << "Number of files: " << filecount << endl;
+
+	int namelength = 0;
+	int listpos = 0;
+	vector<char*> filelist;
+	int filesize[filecount];
+	int max_width = 0;
+	for (int i = 0; i < filecount; i++)
+	{
+		obbfile.read( (char*)&namelength, 4);
+
+		buffer = new char[namelength];
+		obbfile.read( buffer, namelength);
+
+		//4B file name length | filename (variable) | 8B pos | 4B length
+		long position = 0;
+		int length = 0;
+		obbfile.read( (char*)&position, 8);
+		obbfile.read( (char*)&length, 4);
+
+		filelist.push_back(buffer);
+		filesize[i] = length;
+
+		if ( strlen(buffer) > max_width )
+			max_width = strlen(buffer);
+	}
+	max_width += 3;
+	cout << left; // << setw(max_width) << "  FILENAME  " << setw(8) << "FILESIZE" << endl;
+	for (int i = 0; i < filecount; i++)
+	{
+		cout << setw(max_width) << filelist[i];
+		if (printsize)
+   			cout << setw(8) << filesize[i];
+		cout << endl;
+	}
+}
+
+void printHelp()
+{
+	cout << "Usage:" << endl;
+	cout << "  Extract:  xcobb x obb_file [output_dir]" << endl;
+	cout << "  Create:   xcobb c obb_file input_dir" << endl;
+	cout << "  List:     xcobb l[s] obb_file" << endl;
+	cout << "            (ls will also print the size)" << endl;
+}
+
 int main ( int argc, char *argv[])
 {
 	if( argc < 3 || (argv[1][0] == 'c' && argc < 4) )
 	{
-		cout << "xcobb x obb_file [output_dir]" << endl;
-		cout << "xcobb c obb_file input_dir" << endl;
+		printHelp();
 		return 0;
 	}
 
@@ -214,8 +283,10 @@ int main ( int argc, char *argv[])
 		return extract(argv[2], working_dir);
 	else if ( argv[1][0] == 'c' )
 		return create(argv[2], working_dir);
+	else if ( argv[1][0] == 'l' )
+		return listFiles(argv[2], (argv[1][1] == 's'));
 	else
-		cout << "Unkown command '" << argv[1] << "'." << endl;
+		printHelp();
 
 	return 0;
 }
