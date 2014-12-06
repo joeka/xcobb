@@ -1,7 +1,7 @@
 Extract or create OBB files for the Android version of XCOM.
 
 Build:
-  g++ -I /usr/include/boost -lboost_system -lboost_filesystem xcobb.cpp -o xcobb
+  make
 
 Usage:
   Extract:  xcobb x obb_file [output_dir]
