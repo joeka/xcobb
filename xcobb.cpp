@@ -42,7 +42,7 @@ int create( char * filename, fs::path working_dir )
 	{
 		strcpy( cbuf, "..");
 		strcpy( cbuf+2, files[i].string().c_str() + working_dir.string().length() -1);
-		namelength[i] = strlen(cbuf);
+		namelength[i] = strlen(cbuf) + 1;
 		for ( int j = 0; j < namelength[i]; j++)
 		{
 			if (cbuf[j] == '\\')
