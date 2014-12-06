@@ -26,7 +26,6 @@ int create( char * filename, fs::path working_dir )
 	int namelength[filecount];
 	long filepos[filecount];
 	int filesize[filecount];
-	vector<string> filepath;
 
 	fstream obbfile;
 	obbfile.open( filename, ios::out | ios::binary);
@@ -51,7 +50,6 @@ int create( char * filename, fs::path working_dir )
 				cbuf[j] = '\\';
 			}
 		}
-		filepath.push_back (cbuf);
 
 		obbfile.write((char*)&namelength[i],4);
 		obbfile.write(cbuf,namelength[i]);
